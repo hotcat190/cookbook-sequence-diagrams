@@ -33,7 +33,7 @@ Mobile Application-->>Actor:FollowingScreen(followingList)
 
 else User doesn't exist
 Server-->>Mobile Application:404 NOT FOUND error: "Người dùng không tồn tại."
-Mobile Application->Actor:showMessage()
+Mobile Application-->>Actor:showMessage()
 
 
 end
