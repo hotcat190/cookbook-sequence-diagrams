@@ -1,0 +1,36 @@
+title Đăng ký người dùng
+
+actor Actor
+participant Mobile Application
+participant Server
+database Database
+
+activate Actor
+activate Mobile Application
+activate Server
+
+loop Data Invalid
+Actor->Mobile Application:Register
+Mobile Application->Mobile Application:validateInput()
+Mobile Application->Actor:invalidInput()
+end
+
+Mobile Application->Server:POST /api/users/register
+Server->Database:checkExists()
+activate Database
+Database->Server: User
+deactivate Database
+
+alt Email not used
+Server->>Database:createUser()
+activate Database
+Database-->>Server:success
+deactivate Database
+Server-->>Actor:sendValidateEmail()
+Mobile Application<<--Server: message: "Đăng ký thành công. Vui lòng kiểm tra email để xác thực."
+Mobile Application->Actor: showMessage()
+
+else Email Exist
+Server-->>Mobile Application:error: "Email đã được sử dụng."
+Mobile Application->Actor: showMessage() 
+end
