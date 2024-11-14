@@ -1,0 +1,20 @@
+title Tìm kiếm công thức
+
+actor Actor
+
+
+participant MobileApplication
+database API
+
+activate Actor
+activate MobileApplication
+
+Actor->MobileApplication:Choose search
+MobileApplication->Actor:SearchScreen
+
+Actor->MobileApplication:Search
+MobileApplication->API:POST www.themealdb.com/api/json/v1/1/search.php?s={recipeName}
+activate API
+API-->MobileApplication:response: recipeDetails
+deactivate API
+Actor<--MobileApplication:RecipeDetailsScreen(recipeDetails)

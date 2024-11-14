@@ -14,7 +14,7 @@ Actor->MobileApplication:Choose search
 MobileApplication->Actor:SearchScreen
 
 Actor->MobileApplication:Search
-MobileApplication->Server:recipeSearchReq(query)
+MobileApplication->Server:postSearchReq(query)
 activate Server
 Server->Database:find(query)
 activate Database
