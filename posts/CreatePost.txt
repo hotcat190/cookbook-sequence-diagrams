@@ -1,0 +1,52 @@
+title Tạo bài viết mới
+
+actor Actor
+participant Mobile Application
+participant Server
+database Database
+
+activate Actor
+activate Mobile Application
+activate Server
+
+Actor->Mobile Application:Create Post
+Mobile Application->Actor:CreatePostScreen()
+
+loop Invalid Form
+
+Actor->Mobile Application:Input Title and Description
+opt
+Actor->Mobile Application:Input RecipeInfo
+end
+Mobile Application->Mobile Application:validateForm()
+Mobile Application->Actor:invalidForm()
+end
+
+Mobile Application->Server:POST /api/posts
+
+alt Normal
+Server->Database:validateUser(userId)
+activate Database
+Database-->>Server:Result
+deactivate Database
+
+alt Validate Success
+
+Server->Database:createPost(post)
+activate Database
+Database-->>Server:Result
+deactivate Database
+
+Server-->>Mobile Application:response: {"message": "Tạo bài viết thành công.", PostDetails}
+Mobile Application-->>Actor:PostDetailsScreen(PostDetails)
+
+else Validate Failure
+Server-->>Mobile Application:error: "Phiên đăng nhập không hợp lệ."
+Mobile Application-->>Actor:showMessage()
+
+end
+
+else ServerError
+Server-->>Mobile Application:error: "Đã xảy ra lỗi. Vui lòng thử lại sau."
+Mobile Application-->>Actor:showMessage()
+end

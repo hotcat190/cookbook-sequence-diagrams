@@ -1,0 +1,49 @@
+title Chỉnh sửa bài viết
+
+actor Actor
+participant Mobile Application
+participant Server
+database Database
+
+activate Actor
+activate Mobile Application
+activate Server
+
+Actor->Mobile Application:Edit Post
+Mobile Application->Actor:EditPostScreen ()
+
+loop Invalid Form
+
+Actor->Mobile Application:Input Changes
+Mobile Application->Mobile Application:validateForm()
+Mobile Application->Actor:invalidForm()
+end
+
+Mobile Application->Server:POST /api/posts/{postsId}
+
+alt Normal
+Server->Database:validateUser(userId)
+activate Database
+Database-->>Server:Result
+deactivate Database
+
+alt Validate Success
+
+Server->Database:updatePost(post)
+activate Database
+Database-->>Server:Result
+deactivate Database
+
+Server-->>Mobile Application:response: {"message": "Cập nhật bài viết thành công.", PostDetails}
+Mobile Application-->>Actor:PostDetailsScreen(PostDetails)
+
+else Validate Failure
+Server-->>Mobile Application:error: "Phiên đăng nhập không hợp lệ."
+Mobile Application-->>Actor:showMessage()
+
+end
+
+else ServerError
+Server-->>Mobile Application:error: "Đã xảy ra lỗi. Vui lòng thử lại sau."
+Mobile Application-->>Actor:showMessage()
+end
