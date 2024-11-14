@@ -1,0 +1,44 @@
+title Gợi ý tìm kiếm
+
+actor Actor
+
+participant MobileApplication
+participant Server
+
+database Database
+
+activate Actor
+activate MobileApplication
+
+Actor->MobileApplication:Choose Search
+Actor<-MobileApplication:SearchScreen
+
+
+Actor->MobileApplication:input
+
+opt input not empty
+MobileApplication->Server:recipeSearchSuggestReq()
+activate Server
+alt Normal
+Server->Database:findSuggest(query)
+activate Database
+Server<--Database://posts//
+
+deactivate Database
+Server->Server:filter()
+activate Server
+
+MobileApplication<--Server://suggestions//
+deactivate Server
+deactivate Server
+
+opt suggestions not empty
+Actor<-MobileApplication:showSuggest()
+end
+
+else Unexpected error
+activate Server
+MobileApplication<--Server:error: "Đã xảy ra lỗi khi lấy gợi ý tìm kiếm."
+deactivate Server
+end
+end

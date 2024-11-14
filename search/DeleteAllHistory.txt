@@ -1,0 +1,53 @@
+title Xóa toàn bộ lịch sử tìm kiếm
+
+actor Actor
+
+participant MobileApplication
+participant Server
+
+database Database
+
+activate Actor
+activate MobileApplication
+
+
+Actor->MobileApplication:choose search history
+Actor<--MobileApplication:SearchHistoryScreen
+Actor->MobileApplication:choose delete all
+Actor<-MobileApplication:confimation
+Actor-->MobileApplication:response
+
+opt respone = yes
+
+MobileApplication->Server:deleteSearchHistoryReq()
+activate Server
+Server->Server:verifyToken
+
+alt Valid token
+
+Server->Database:deleteAllSearchHistory()
+activate Database
+Server<--Database:success
+deactivate Database
+MobileApplication<--Server:message
+deactivate Server
+Actor<--MobileApplication:update
+
+
+else Invalid token
+
+activate Server
+MobileApplication<--Server:error
+deactivate Server
+Actor<--MobileApplication:re-login
+
+else Server error
+
+activate Server
+MobileApplication<--Server:error
+deactivate Server
+Actor<--MobileApplication:showMessage()
+
+end
+
+end

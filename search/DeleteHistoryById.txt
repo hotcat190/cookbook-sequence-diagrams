@@ -1,0 +1,68 @@
+title Xóa lịch sử tìm kiếm theo ID
+
+actor Actor
+
+participant MobileApplication
+participant Server
+
+database Database
+
+activate Actor
+activate MobileApplication
+
+Actor->MobileApplication:choose search history
+Actor<--MobileApplication:SearchHistoryScreen
+Actor->MobileApplication:delete a history
+Actor<--MobileApplication:confirmation
+Actor->MobileApplication:confirm
+
+opt confirm = yes
+
+MobileApplication->Server:deleteSearchHistoryReq()
+activate Server
+
+alt Valid token
+
+Server->Server:verifyToken
+activate Server
+deactivate Server
+Server->Database:deleteSearchHistory(id)
+activate Database
+
+alt id exist
+
+Server<--Database:success
+deactivate Database
+MobileApplication<--Server:message: "Xóa lịch sử tìm kiếm thành công."
+deactivate Server
+
+else id not exist
+
+activate Server
+activate Database
+Server<--Database:failed
+deactivate Database
+MobileApplication<--Server:error: "Mục lịch sử tìm kiếm không tồn tại."
+deactivate Server
+Actor<--MobileApplication:showMessage()
+
+end
+
+Actor<--MobileApplication:update
+
+else Invalid token
+
+activate Server
+MobileApplication<--Server:error
+deactivate Server
+Actor<--MobileApplication:re-login
+
+else Server error
+
+activate Server
+MobileApplication<--Server:error
+deactivate Server
+Actor<--MobileApplication:showMessage()
+end
+
+end

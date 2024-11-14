@@ -1,0 +1,25 @@
+title Tìm kiếm bài viết
+
+actor Actor
+
+
+participant MobileApplication
+participant Server
+database Database
+
+activate Actor
+activate MobileApplication
+
+Actor->MobileApplication:Choose search
+MobileApplication->Actor:SearchScreen
+
+Actor->MobileApplication:Search
+MobileApplication->Server:recipeSearchReq(query)
+activate Server
+Server->Database:find(query)
+activate Database
+Database-->Server://posts//
+deactivate Database
+Server-->MobileApplication://posts//
+deactivate Server
+Actor<--MobileApplication:showResults()
