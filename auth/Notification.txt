@@ -1,0 +1,58 @@
+title Nhận thông báo về bình luận, lượt thích, và người theo dõi mới
+
+actor Actor
+
+participant MobileApplication
+participant Firebase
+participant Server
+
+database Database
+
+activate Actor
+activate Server
+
+
+Server->Database:somethingNew
+Server<--Database:success
+Server->Database:findUser()
+Server<--Database:User
+
+opt notification on
+Server->Firebase:notifyBody
+activate Firebase
+Server->Database:saveNotification
+Server<--Database:success
+deactivate Server
+MobileApplication<--Firebase:pushNotify
+activate MobileApplication
+deactivate Firebase
+Actor<--MobileApplication:pushNotification
+end
+Actor->MobileApplication:open NotificationsScreen
+MobileApplication->Server:getNotificationsReq
+activate Server
+Server->Server:verifyToken
+
+alt Valid token
+Server->Database:findNotification()
+
+Server<--Database:return
+
+MobileApplication<--Server:return
+deactivate Server
+Actor<--MobileApplication:showNotifications()
+
+else Invalid token
+
+activate Server
+MobileApplication<--Server:error
+deactivate Server
+Actor<--MobileApplication:re-login
+
+else Server error
+
+activate Server
+MobileApplication<--Server:error
+deactivate Server
+Actor<--MobileApplication:showMessage()
+end

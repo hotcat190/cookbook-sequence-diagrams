@@ -1,0 +1,49 @@
+title Xem lịch sử tìm kiếm
+
+actor Actor
+
+participant MobileApplication
+participant Server
+
+database Database
+
+activate Actor
+activate MobileApplication
+
+
+Actor->MobileApplication:choose search history
+MobileApplication->Server:searchHistoryReq()
+activate Server
+
+alt Valid token
+
+Server->Database:findSearchHistory(id)
+activate Database
+
+Server<--Database:histories
+deactivate Database
+
+MobileApplication<--Server:return
+deactivate Server
+
+alt return not empty
+Actor<--MobileApplication:SearchHistoryScreen
+else return empty
+Actor<--MobileApplication:message
+end
+
+else Invalid token
+
+activate Server
+MobileApplication<--Server:error: "Phiên đăng nhập không hợp lệ."
+deactivate Server
+Actor<--MobileApplication:re-login
+
+else Server error
+
+activate Server
+MobileApplication<--Server: error: "Đã xảy ra lỗi. Vui lòng thử lại sau."
+deactivate Server
+Actor<--MobileApplication:showMessage()
+
+end
