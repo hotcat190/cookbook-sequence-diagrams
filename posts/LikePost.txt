@@ -44,7 +44,7 @@ Mobile Application-->>Actor:showMessage()
 
 end
 
-al ServerError
+else ServerError
 Server-->>Mobile Application:error: "Đã xảy ra lỗi. Vui lòng thử lại sau."
 Mobile Application-->>Actor:showMessage()
 end
