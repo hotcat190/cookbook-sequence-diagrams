@@ -1,0 +1,50 @@
+title Thích bài viết
+
+actor Actor
+participant Mobile Application
+participant Server
+database Database
+
+activate Actor
+activate Mobile Application
+activate Server
+
+Actor->Mobile Application:Like Post
+
+Mobile Application->Server:POST /api/posts/{postsId}/like
+
+alt Normal
+Server->Database:validateUser(userId)
+activate Database
+Database-->>Server:Result
+deactivate Database
+
+alt Validate Success
+
+Server->Database:addLike(postId)
+activate Database
+Database-->>Server:Result
+deactivate Database
+
+alt Post exist
+
+Server-->>Mobile Application:response: {"message": "Đã thích bài viết.", "likesCount": 101}
+Mobile Application-->>Actor:New Screen with updated likes
+
+else Post doesn't exist
+Server-->>Mobile Application:error: "Bài viết không tồn tại."
+Mobile Application->Actor:showMessage()
+
+
+end
+
+else Validate Failure
+Server-->>Mobile Application:error: "Phiên đăng nhập không hợp lệ."
+Mobile Application-->>Actor:showMessage()
+
+end
+
+al ServerError
+Server-->>Mobile Application:error: "Đã xảy ra lỗi. Vui lòng thử lại sau."
+Mobile Application-->>Actor:showMessage()
+end
