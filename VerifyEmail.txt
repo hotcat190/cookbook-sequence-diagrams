@@ -7,7 +7,7 @@ activate User
 
 User->Mobile Application:Verify link
 activate Mobile Application
-Mobile Application->>Server:verifyRequest()
+Mobile Application->>Server:GET /api/users/verify-email?token={token}
 activate Server
 
 alt Token is valid
