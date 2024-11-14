@@ -1,0 +1,28 @@
+title Hiển thị Newfeeds cho Guest
+
+actor Actor
+participant Mobile Application
+participant Server
+database Database
+
+activate Actor
+activate Mobile Application
+activate Server
+
+Actor->Mobile Application:Newfeeds Screen
+
+Mobile Application->Server:GET /api/newfeeds/
+
+alt Normal
+Server->Database:getGuestNewsfeed()
+activate Database
+Database-->>Server:Result
+deactivate Database
+
+Server-->>Mobile Application:response: NewsfeedList
+Mobile Application-->>Actor:NewfeedsScreen(NewsfeedList)
+
+else ServerError
+Server-->>Mobile Application:error: "Đã xảy ra lỗi. Vui lòng thử lại sau."
+Mobile Application-->>Actor:showMessage()
+end
