@@ -1,0 +1,50 @@
+title Xem bài viết chi tiết
+
+actor Actor
+participant Mobile Application
+participant Server
+database Database
+
+activate Actor
+activate Mobile Application
+activate Server
+
+Actor->Mobile Application:View Post Details
+
+Mobile Application->Server:GET /api/posts/{postsId}
+
+alt Normal
+Server->Database:validateUser(userId)
+activate Database
+Database-->>Server:Result
+deactivate Database
+
+alt Validate Success
+
+Server->Database:getPost(postId)
+activate Database
+Database-->>Server:Result
+deactivate Database
+
+alt Post exist
+
+Server-->>Mobile Application:response: postDetails
+Mobile Application-->>Actor:PostDetailsScreen(postDetails)
+
+else Post doesn't exist
+Server-->>Mobile Application:error: "Bài viết không tồn tại."
+Mobile Application->Actor:showMessage()
+
+
+end
+
+else Validate Failure
+Server-->>Mobile Application:error: "Phiên đăng nhập không hợp lệ."
+Mobile Application-->>Actor:showMessage()
+
+end
+
+else ServerError
+Server-->>Mobile Application:error: "Đã xảy ra lỗi. Vui lòng thử lại sau."
+Mobile Application-->>Actor:showMessage()
+end
