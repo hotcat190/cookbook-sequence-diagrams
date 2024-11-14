@@ -1,0 +1,38 @@
+title Xem hồ sơ cá nhân
+
+actor Actor
+participant Mobile Application
+participant Server
+database Database
+
+activate Actor
+activate Mobile Application
+activate Server
+
+Actor->Mobile Application:Profile Screen
+
+Mobile Application->Server:GET /api/users/{userId}
+
+alt Normal
+Server->Database:getUser(userId)
+activate Database
+Database-->>Server:Result
+deactivate Database
+
+alt User exists
+
+Server-->>Mobile Application:response: UserInfo
+
+Mobile Application-->>Actor:ProfileScreen(UserInfo)
+
+else User doesn't exist
+
+Server-->>Mobile Application:error: "Người dùng không tồn tại."
+Mobile Application-->>Actor:showMessage()
+
+end
+
+else ServerError
+Server-->>Mobile Application:error: "Đã xảy ra lỗi. Vui lòng thử lại sau."
+Mobile Application-->>Actor:showMessage()
+end
