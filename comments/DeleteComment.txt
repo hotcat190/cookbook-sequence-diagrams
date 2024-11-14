@@ -1,0 +1,54 @@
+title Xóa bình luận
+
+actor Actor
+participant Mobile Application
+participant Server
+database Database
+
+activate Actor
+activate Mobile Application
+activate Server
+
+Actor->Mobile Application:Delete a comment on a post
+
+Mobile Application->Server:DELETE /api/comments/{commentId}
+
+alt Normal
+
+Server->Database:validateUser(userId)
+activate Database
+Database-->>Server:Result
+deactivate Database
+
+alt Validate Success
+
+Server->Database:removeComment(comment)
+activate Database
+Database-->>Server:Result
+deactivate Database
+
+alt Post exist
+
+Server-->>Mobile Application:200 OK response: {"message": "Xóa bình luận thành công."}
+activate Mobile Application
+Mobile Application->Mobile Application:Update comments
+deactivate Mobile Application
+Mobile Application-->>Actor:CommentsScreen(comments)
+
+else Post doesn't exist
+Server-->>Mobile Application:404 NOT FOUND error: "Bài viết không tồn tại."
+Mobile Application-->>Actor:showMessage()
+
+end
+
+else Validate Failure
+Server-->>Mobile Application:error: "Phiên đăng nhập không hợp lệ."
+Mobile Application-->>Actor:showMessage()
+
+end
+
+else ServerError
+Server-->>Mobile Application:408 REQUEST TIMEOUT error: "Đã xảy ra lỗi. Vui lòng thử lại sau."
+Mobile Application-->>Actor:showMessage()
+end
+

@@ -1,0 +1,39 @@
+title Xem bình luận
+
+actor Actor
+participant Mobile Application
+participant Server
+database Database
+
+activate Actor
+activate Mobile Application
+activate Server
+
+Actor->Mobile Application:View Post's Comments
+
+Mobile Application->Server:GET /api/posts/{postId}/comments
+
+alt Normal
+
+
+Server->Database:getComments(postId)
+activate Database
+Database-->>Server:Result
+deactivate Database
+
+alt Post exist
+
+Server-->>Mobile Application:200 OK response: comments
+Mobile Application-->>Actor:CommentsScreen(comments)
+
+else Post doesn't exist
+Server-->>Mobile Application:404 NOT FOUND error: "Bài viết không tồn tại."
+Mobile Application-->>Actor:showMessage()
+
+
+end
+
+else ServerError
+Server-->>Mobile Application:408 REQUEST TIMEOUT error: "Đã xảy ra lỗi. Vui lòng thử lại sau."
+Mobile Application-->>Actor:showMessage()
+end

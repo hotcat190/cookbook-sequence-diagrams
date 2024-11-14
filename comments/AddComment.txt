@@ -1,0 +1,48 @@
+title Thêm bình luận
+
+actor Actor
+participant Mobile Application
+participant Server
+database Database
+
+activate Actor
+activate Mobile Application
+activate Server
+
+Actor->Mobile Application:Add a comment to post
+Mobile Application->Actor:CommentEditScreen()
+
+loop Invalid Comment
+Actor->Mobile Application:Edit and send comment
+Mobile Application->Mobile Application:validateComment()
+Mobile Application->Actor:invalidComment()
+end
+
+Mobile Application->Server:POST /api/posts/{postId}/comments
+
+alt Normal
+
+Server->Database:addComment(postId, comment)
+activate Database
+Database-->>Server:Result
+deactivate Database
+
+alt Post exist
+
+Server-->>Mobile Application:200 OK response: {"message": "Thêm bình luận thành công.", comment}
+activate Mobile Application
+Mobile Application->Mobile Application:Update comments
+deactivate Mobile Application
+Mobile Application-->>Actor:CommentsScreen(comments)
+
+else Post doesn't exist
+Server-->>Mobile Application:404 NOT FOUND error: "Bài viết không tồn tại."
+Mobile Application-->>Actor:showMessage()
+
+
+end
+
+else ServerError
+Server-->>Mobile Application:408 REQUEST TIMEOUT error: "Đã xảy ra lỗi. Vui lòng thử lại sau."
+Mobile Application-->>Actor:showMessage()
+end
