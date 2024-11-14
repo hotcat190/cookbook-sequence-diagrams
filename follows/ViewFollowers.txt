@@ -1,0 +1,50 @@
+title Xem danh sách người theo dõi
+
+actor Actor
+participant Mobile Application
+participant Server
+database Database
+
+activate Actor
+activate Mobile Application
+activate Server
+
+Actor->Mobile Application:View User's Follwers
+
+Mobile Application->Server:GET /api/users/{userId}/followers
+
+alt Normal
+Server->Database:validateUser(userId)
+activate Database
+Database-->>Server:Result
+deactivate Database
+
+alt Validate Success
+
+Server->Database:getFollowers(userId)
+activate Database
+Database-->>Server:Result
+deactivate Database
+
+alt User exist
+
+Server-->>Mobile Application:200 OK response: followerList
+Mobile Application-->>Actor:FollowersScreen(followerList)
+
+else User doesn't exist
+Server-->>Mobile Application:404 NOT FOUND error: "Người dùng không tồn tại."
+Mobile Application->Actor:showMessage()
+
+
+end
+
+else Validate Failure
+Server-->>Mobile Application:401 UNAUTHORIZED error: "Phiên đăng nhập không hợp lệ."
+Mobile Application-->>Actor:showMessage()
+
+end
+
+else ServerError
+Server-->>Mobile Application:408 REQUEST TIMEOUT error: "Đã xảy ra lỗi. Vui lòng thử lại sau."
+Mobile Application-->>Actor:showMessage()
+end

@@ -1,0 +1,50 @@
+title Hủy theo dõi người dùng
+
+actor Actor
+participant Mobile Application
+participant Server
+database Database
+
+activate Actor
+activate Mobile Application
+activate Server
+
+Actor->Mobile Application:Unfollow User
+
+Mobile Application->Server:DELETE /api/users/{userId}/follow
+
+alt Normal
+Server->Database:validateUser(userId)
+activate Database
+Database-->>Server:Result
+deactivate Database
+
+alt Validate Success
+
+Server->Database:removeFollow(followerId, userId)
+activate Database
+Database-->>Server:Result
+deactivate Database
+
+alt User exist
+
+Server-->>Mobile Application:200 OK response: {"message": "Đã hủy theo dõi người dùng.", "followingCount": 100}
+Mobile Application-->>Actor:New Screen with updated follow status
+
+else User doesn't exist
+Server-->>Mobile Application:404 NOT FOUND error: "Người dùng không tồn tại."
+Mobile Application->Actor:showMessage()
+
+
+end
+
+else Validate Failure
+Server-->>Mobile Application:401 UNAUTHORIZED error: "Phiên đăng nhập không hợp lệ."
+Mobile Application-->>Actor:showMessage()
+
+end
+
+else ServerError
+Server-->>Mobile Application:408 REQUEST TIMEOUT error: "Đã xảy ra lỗi. Vui lòng thử lại sau."
+Mobile Application-->>Actor:showMessage()
+end
