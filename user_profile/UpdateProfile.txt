@@ -1,0 +1,52 @@
+title Chỉnh sửa hồ sơ cá nhân
+
+actor Actor
+participant Mobile Application
+participant Server
+database Database
+
+activate Actor
+activate Mobile Application
+activate Server
+
+Actor->Mobile Application:Edit Profile
+Mobile Application->Actor:EditProfileScreen()
+
+loop Form Invalid
+Actor->Mobile Application:Input form
+Mobile Application->Mobile Application:validateForm()
+Mobile Application->Actor:invalidForm()
+end
+
+Mobile Application->Server:PUT /api/users/{userId}
+
+alt Normal
+Server->Database:validateUser(userId)
+activate Database
+Database-->>Server:Result
+deactivate Database
+
+alt Validate Success
+
+Server->>Database:updateUserInfo()
+activate Database
+Database-->>Server:Result
+
+Server-->>Mobile Application:response: UserInfo
+
+Mobile Application-->>Actor:ProfileScreen(UserInfo)
+
+else Validate Failure
+Server-->>Mobile Application:error: "Phiên đăng nhập không hợp lệ hoặc bạn không có quyền chỉnh sửa hồ sơ này."
+Mobile Application-->>Actor:showMessage()
+
+else User doesn't exist
+Server-->>Mobile Application:error: "Người dùng không tồn tại."
+Mobile Application-->>Actor:showMessage()
+
+end
+
+else ServerError
+Server-->>Mobile Application:error: "Đã xảy ra lỗi. Vui lòng thử lại sau."
+Mobile Application-->>Actor:showMessage()
+end
