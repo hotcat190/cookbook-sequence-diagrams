@@ -33,7 +33,7 @@ Mobile Application-->>Actor:FavoritesScreen(userFavorites)
 
 else User doesn't exist
 Server-->>Mobile Application:error: "Bài viết không tồn tại."
-Mobile Application->Actor:showMessage()
+Mobile Application-->>Actor:showMessage()
 
 
 end
