@@ -16,6 +16,9 @@ Mobile Application->Actor:invalidInput()
 end
 
 Mobile Application->Server:POST /api/users/register
+
+alt Normal
+
 Server->Database:checkExists()
 activate Database
 Database->Server: User
@@ -33,4 +36,10 @@ Mobile Application->Actor: showMessage()
 else Email Exist
 Server-->>Mobile Application:error: "Email đã được sử dụng."
 Mobile Application->Actor: showMessage() 
+end
+
+else ServerError
+Server-->>Mobile Application:error: "Đã xảy ra lỗi. Vui lòng thử lại sau."
+Mobile Application->Actor: showMessage()
+
 end
