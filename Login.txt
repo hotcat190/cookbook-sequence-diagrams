@@ -1,0 +1,39 @@
+title Đăng nhập
+
+actor Actor
+
+participant MobileApplication
+participant Server
+database Database
+
+activate Actor
+activate MobileApplication
+activate Server
+
+loop Lack infomation
+Actor->MobileApplication:Login
+MobileApplication->MobileApplication:validateForm()
+MobileApplication->Actor:invalidForm(): "Vui lòng nhập đầy đủ thông tin"
+end
+
+MobileApplication->Server:LoginRequest
+
+alt Normal
+Server->Database:findUser()
+activate Database
+Database->Server:User
+deactivate Database
+
+alt User is valid
+Server-->>MobileApplication:access_token + message
+
+else Wrong credentials
+Server-->>MobileApplication:401 error: "Unauthorized"
+
+end 
+else Error while performing
+Server-->>MobileApplication:error: "Đã xảy ra lỗi. Vui lòng thử lại sau."
+
+
+end
+MobileApplication->Actor:showMessage()
