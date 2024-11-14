@@ -1,0 +1,29 @@
+title Xác thực Email
+
+actor User
+participant Mobile Application
+participant Server
+activate User
+
+User->Mobile Application:Verify link
+activate Mobile Application
+Mobile Application->>Server:verifyRequest()
+activate Server
+
+alt Token is valid
+Server-->>Mobile Application:message: "Xác thực email thành công."
+deactivate Server
+
+else Token not valid
+activate Server
+Server-->>Mobile Application:error: "Phiên đăng nhập không hợp lệ hoặc đã hết hạn."
+deactivate Server
+
+else Server error
+activate Server
+Server-->>Mobile Application:error: "Đã xảy ra lỗi. Vui lòng thử lại sau."
+deactivate Server
+
+end
+
+Mobile Application->User:showMessage()
