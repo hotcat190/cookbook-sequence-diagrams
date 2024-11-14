@@ -16,7 +16,7 @@ MobileApplication->MobileApplication:validateForm()
 MobileApplication->Actor:invalidForm(): "Vui lòng nhập đầy đủ thông tin"
 end
 
-MobileApplication->Server:LoginRequest
+MobileApplication->Server:POST /api/users/login
 
 alt Normal
 Server->Database:findUser()
