@@ -11,29 +11,29 @@ activate MobileApplication
 activate Server
 
 loop Lack infomation
-Actor->MobileApplication:Login
-MobileApplication->MobileApplication:validateForm()
-MobileApplication->Actor:invalidForm(): "Vui lòng nhập đầy đủ thông tin"
+Actor->MobileApplication:1: Login
+MobileApplication->MobileApplication:2: validateForm()
+MobileApplication-->>Actor:3: invalidForm(): "Vui lòng nhập đầy đủ thông tin"
 end
 
-MobileApplication->Server:POST /api/users/login
+MobileApplication->Server:4: POST /api/users/login
 
 alt Normal
-Server->Database:findUser()
+Server->Database:5: findUser()
 activate Database
-Database->Server:User
+Database-->>Server:6: User
 deactivate Database
 
 alt User is valid
-Server-->>MobileApplication:access_token + message
+Server-->>MobileApplication:7.1: access_token + message
 
 else Wrong credentials
-Server-->>MobileApplication:401 error: "Unauthorized"
+Server-->>MobileApplication:7.2: 401 error: "Unauthorized"
 
 end 
 else Error while performing
-Server-->>MobileApplication:error: "Đã xảy ra lỗi. Vui lòng thử lại sau."
+Server-->>MobileApplication:7.3: error: "Đã xảy ra lỗi. Vui lòng thử lại sau."
 
 
 end
-MobileApplication->Actor:showMessage()
+MobileApplication-->>Actor:8: showMessage()

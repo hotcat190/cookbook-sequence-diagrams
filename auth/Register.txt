@@ -10,36 +10,36 @@ activate Mobile Application
 activate Server
 
 loop Data Invalid
-Actor->Mobile Application:Register
-Mobile Application->Mobile Application:validateInput()
-Mobile Application->Actor:invalidInput()
+Actor->Mobile Application:1.1: Register
+Mobile Application->Mobile Application:1.2: validateInput()
+Mobile Application->Actor:1.3: invalidInput()
 end
 
-Mobile Application->Server:POST /api/users/register
+Mobile Application->Server:2: POST /api/users/register
 
 alt Normal
 
-Server->Database:checkExists()
+Server->Database:3: checkExists()
 activate Database
-Database->Server: User
+Database-->>Server:4: Result
 deactivate Database
 
 alt Email not used
-Server->>Database:createUser()
+Server->Database:5: createUser()
 activate Database
-Database-->>Server:success
+Database-->>Server:6: success
 deactivate Database
-Server-->>Actor:sendValidateEmail()
-Mobile Application<<--Server: message: "Đăng ký thành công. Vui lòng kiểm tra email để xác thực."
-Mobile Application->Actor: showMessage()
+Server-->>Actor:7.1: sendValidateEmail()
+Mobile Application<<--Server:7.1.1: message: "Đăng ký thành công. Vui lòng kiểm tra email để xác thực."
+Mobile Application-->>Actor:7.1.2: showMessage()
 
 else Email Exist
-Server-->>Mobile Application:error: "Email đã được sử dụng."
-Mobile Application->Actor: showMessage() 
+Server-->>Mobile Application:7.2: error: "Email đã được sử dụng."
+Mobile Application-->>Actor: 7.2.1: showMessage() 
 end
 
 else ServerError
-Server-->>Mobile Application:error: "Đã xảy ra lỗi. Vui lòng thử lại sau."
-Mobile Application->Actor: showMessage()
+Server-->>Mobile Application:7.3: error: "Đã xảy ra lỗi. Vui lòng thử lại sau."
+Mobile Application-->>Actor:7.3.1: showMessage()
 
 end

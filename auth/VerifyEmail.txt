@@ -5,25 +5,25 @@ participant Mobile Application
 participant Server
 activate User
 
-User->Mobile Application:Verify link
+User->Mobile Application:1: Verify link
 activate Mobile Application
-Mobile Application->>Server:GET /api/users/verify-email?token={token}
+Mobile Application->Server:2: GET /api/users/verify-email?token={token}
 activate Server
 
 alt Token is valid
-Server-->>Mobile Application:message: "Xác thực email thành công."
+Server-->>Mobile Application:3.1: message: "Xác thực email thành công."
 deactivate Server
 
 else Token not valid
 activate Server
-Server-->>Mobile Application:error: "Phiên đăng nhập không hợp lệ hoặc đã hết hạn."
+Server-->>Mobile Application:3.2: error: "Phiên đăng nhập không hợp lệ hoặc đã hết hạn."
 deactivate Server
 
 else Server error
 activate Server
-Server-->>Mobile Application:error: "Đã xảy ra lỗi. Vui lòng thử lại sau."
+Server-->>Mobile Application:3.3: error: "Đã xảy ra lỗi. Vui lòng thử lại sau."
 deactivate Server
 
 end
 
-Mobile Application->User:showMessage()
+Mobile Application-->>User:4: showMessage()
