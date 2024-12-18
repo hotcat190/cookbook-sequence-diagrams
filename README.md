@@ -1,6 +1,6 @@
 <h1>Use-case Diagram</h1>
 <img src="CookBook_revised1.drawio.png">
-<img src="Cookbook_social1.drawio.png">
+<img src="Cookbook_social.drawio.png">
 <h1>Sequence Diagrams</h1>
 <h2>Auth</h2>
 <img src="auth/ChangePassword.png">
