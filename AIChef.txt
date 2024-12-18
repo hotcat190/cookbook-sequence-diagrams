@@ -1,0 +1,36 @@
+title Ask AIChef
+
+actor Actor
+participant Mobile Application
+participant Server
+participant ImageRegconitionService
+participant LLMService
+
+activate Actor
+activate Mobile Application
+activate Server
+
+Actor->Mobile Application:1. Go to AI Chef Screen
+Mobile Application-->>Actor: 2. AiChefScreen()
+
+opt Scan picture for ingredients
+Actor->Mobile Application: 3.1. Pick a picture from device
+Mobile Application->Server:3.2. POST api/airecipe/uploadimage
+Server->ImageRegconitionService: 3.3. Upload image
+activate ImageRegconitionService
+ImageRegconitionService-->>Server: 3.4. Ingredients data
+deactivate ImageRegconitionService
+Server-->>Mobile Application:3.5. Ingredients data
+Mobile Application-->>Actor: 3.6. New AiChefScreen() with ingredients data
+end
+
+Actor->Mobile Application: 4. Add/Change form input
+Actor->Mobile Application: 5. Confirm form submit
+Mobile Application->Server: 6. Form submit request
+Server->LLMService: 7. Send form data for processing
+activate LLMService
+LLMService-->>Server: 8. Recipes data
+deactivate LLMService
+Server-->>Mobile Application: 9. Recipes data
+Mobile Application-->>Actor: 10. Display recipes
+

@@ -9,45 +9,33 @@ activate Actor
 activate Mobile Application
 activate Server
 
-Actor->Mobile Application:Post Details
-Mobile Application->Actor:PostDetailsScreen()
+Actor->Mobile Application:1. Delete Post
 
-Actor->Mobile Application:Delete Post
-Mobile Application->Actor:confirmDeletePost()
-
-alt User Confirm
-Actor->Mobile Application:Confirm
-Mobile Application->Server:POST /api/posts/{postsId}
+Mobile Application->Server:2. DELETE /api/posts/{postsId}
 
 alt Normal
-Server->Database:validateUser(userId)
+Server->Database:3. validateUser(userId)
 activate Database
-Database-->>Server:Result
+Database-->>Server:4. Result
 deactivate Database
 
 alt Validate Success
 
-Server->Database:deletePost(postId)
+Server->Database:5. deletePost(postId)
 activate Database
-Database-->>Server:Result
+Database-->>Server:6. Result
 deactivate Database
 
-Server-->>Mobile Application:response: {"message": "Xóa bài viết thành công."}
-Mobile Application-->>Actor:UserPostListScreen(userId)
+Server-->>Mobile Application:7.1. response: {"message": "Xóa bài viết thành công."}
+Mobile Application-->>Actor:7.1.1. updated screen
 
 else Validate Failure
-Server-->>Mobile Application:error: "Phiên đăng nhập không hợp lệ."
-Mobile Application-->>Actor:showMessage()
+Server-->>Mobile Application:7.2. error: "Phiên đăng nhập không hợp lệ."
+Mobile Application-->>Actor:7.2.1. showMessage()
 
 end
 
 else ServerError
-Server-->>Mobile Application:error: "Đã xảy ra lỗi. Vui lòng thử lại sau."
-Mobile Application-->>Actor:showMessage()
-end
-
-else User Cancel
-Actor->Mobile Application:Cancel
-Mobile Application-->>Actor:cancelDeletePost()
-
+Server-->>Mobile Application:7.3. error: "Đã xảy ra lỗi. Vui lòng thử lại sau."
+Mobile Application-->>Actor:7.3.1. showMessage()
 end

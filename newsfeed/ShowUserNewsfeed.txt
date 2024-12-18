@@ -9,35 +9,35 @@ activate Actor
 activate Mobile Application
 activate Server
 
-Actor->Mobile Application:Newfeeds Screen
+Actor->Mobile Application:1. Newfeeds Screen
 
-Mobile Application->Server:GET /api/newfeeds/{userId}
+Mobile Application->Server:2. GET /api/newfeeds/{userId}
 
 alt Normal
-Server->Database:validateUser(userId)
+Server->Database:3. validateUser(userId)
 activate Database
-Database-->>Server:Result
+Database-->>Server:4. Result
 deactivate Database
 
 alt Validate Success
 
 
-Server->Database:getUserNewsfeed(userId)
+Server->Database:5. getUserNewsfeed(userId)
 activate Database
-Database-->>Server:Result
+Database-->>Server:6. Result
 deactivate Database
 
-Server-->>Mobile Application:response: NewsfeedList
-Mobile Application-->>Actor:NewfeedsScreen(NewsfeedList)
+Server-->>Mobile Application:7.1. response: NewsfeedList
+Mobile Application-->>Actor:8.1. NewfeedsScreen(NewsfeedList)
 
 else Validate Failure
-Server-->>Mobile Application:error: "Phiên đăng nhập không hợp lệ."
-Mobile Application-->>Actor:showMessage()
+Server-->>Mobile Application:7.2. error: "Phiên đăng nhập không hợp lệ."
+Mobile Application-->>Actor:8.2. showMessage()
 
 
 end
 
 else ServerError
-Server-->>Mobile Application:error: "Đã xảy ra lỗi. Vui lòng thử lại sau."
-Mobile Application-->>Actor:showMessage()
+Server-->>Mobile Application:7.3. error: "Đã xảy ra lỗi. Vui lòng thử lại sau."
+Mobile Application-->>Actor:8.3 showMessage()
 end

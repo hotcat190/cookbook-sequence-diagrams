@@ -9,42 +9,42 @@ activate Actor
 activate Mobile Application
 activate Server
 
-Actor->Mobile Application:Follow User
+Actor->Mobile Application:1. Follow User
 
-Mobile Application->Server:POST /api/users/{userId}/follow
+Mobile Application->Server:2. POST /api/users/{userId}/follow
 
 alt Normal
-Server->Database:validateUser(userId)
+Server->Database:3. validateUser(userId)
 activate Database
-Database-->>Server:Result
+Database-->>Server:4. Result
 deactivate Database
 
 alt Validate Success
 
-Server->Database:addFollow(followerId, userId)
+Server->Database:5. addFollow(followerId, userId)
 activate Database
-Database-->>Server:Result
+Database-->>Server:6. Result
 deactivate Database
 
 alt User exist
 
-Server-->>Mobile Application:200 OK response: {"message": "Đã theo dõi người dùng.", "followingCount": 101}
-Mobile Application-->>Actor:New Screen with updated follow status
+Server-->>Mobile Application:6.1. 200 OK response: {"message": "Đã theo dõi người dùng.", "followingCount": 101}
+Mobile Application-->>Actor:7.1. New Screen with updated follow status
 
 else User doesn't exist
-Server-->>Mobile Application:404 NOT FOUND error: "Người dùng không tồn tại."
-Mobile Application->Actor:showMessage()
+Server-->>Mobile Application:6.2. 404 NOT FOUND error: "Người dùng không tồn tại."
+Mobile Application-->>Actor:7.2. showMessage()
 
 
 end
 
 else Validate Failure
-Server-->>Mobile Application:401 UNAUTHORIZED error: "Phiên đăng nhập không hợp lệ."
-Mobile Application-->>Actor:showMessage()
+Server-->>Mobile Application:6.3. 401 UNAUTHORIZED error: "Phiên đăng nhập không hợp lệ."
+Mobile Application-->>Actor:7.3. showMessage()
 
 end
 
 else ServerError
-Server-->>Mobile Application:408 REQUEST TIMEOUT error: "Đã xảy ra lỗi. Vui lòng thử lại sau."
-Mobile Application-->>Actor:showMessage()
+Server-->>Mobile Application:6.4. 408 REQUEST TIMEOUT error: "Đã xảy ra lỗi. Vui lòng thử lại sau."
+Mobile Application-->>Actor:7.4. showMessage()
 end

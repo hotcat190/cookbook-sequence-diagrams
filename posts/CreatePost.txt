@@ -9,44 +9,44 @@ activate Actor
 activate Mobile Application
 activate Server
 
-Actor->Mobile Application:Create Post
-Mobile Application->Actor:CreatePostScreen()
+Actor->Mobile Application:1. Create Post
+Mobile Application-->>Actor:2. CreatePostScreen()
 
 loop Invalid Form
 
-Actor->Mobile Application:Input Title and Description
+Actor->Mobile Application:3. Input Title and Description
 opt
-Actor->Mobile Application:Input RecipeInfo
+Actor->Mobile Application:4. Input RecipeInfo
 end
-Mobile Application->Mobile Application:validateForm()
-Mobile Application->Actor:invalidForm()
+Mobile Application->Mobile Application:5. validateForm()
+Mobile Application-->>Actor:6. invalidForm()
 end
 
-Mobile Application->Server:POST /api/posts
+Mobile Application->Server:7. POST /api/posts
 
 alt Normal
-Server->Database:validateUser(userId)
+Server->Database:8. validateUser(userId)
 activate Database
-Database-->>Server:Result
+Database-->>Server:9. Result
 deactivate Database
 
 alt Validate Success
 
-Server->Database:createPost(post)
+Server->Database:10. createPost(post)
 activate Database
-Database-->>Server:Result
+Database-->>Server:11. Result
 deactivate Database
 
-Server-->>Mobile Application:response: {"message": "Tạo bài viết thành công.", PostDetails}
-Mobile Application-->>Actor:PostDetailsScreen(PostDetails)
+Server-->>Mobile Application:12.1. response: {"message": "Tạo bài viết thành công.", PostDetails}
+Mobile Application-->>Actor:12.1.1. PostDetailsScreen(PostDetails)
 
 else Validate Failure
-Server-->>Mobile Application:error: "Phiên đăng nhập không hợp lệ."
-Mobile Application-->>Actor:showMessage()
+Server-->>Mobile Application:12.2. error: "Phiên đăng nhập không hợp lệ."
+Mobile Application-->>Actor:12.2.1. showMessage()
 
 end
 
 else ServerError
-Server-->>Mobile Application:error: "Đã xảy ra lỗi. Vui lòng thử lại sau."
-Mobile Application-->>Actor:showMessage()
+Server-->>Mobile Application:12.3. error: "Đã xảy ra lỗi. Vui lòng thử lại sau."
+Mobile Application-->>Actor:12.3.1. showMessage()
 end

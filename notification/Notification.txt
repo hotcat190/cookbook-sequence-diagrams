@@ -1,58 +1,36 @@
 title Nhận thông báo về bình luận, lượt thích, và người theo dõi mới
 
 actor Actor
+actor Recipient
 
 participant MobileApplication
-participant Firebase
-participant Server
 
+participant Server
 database Database
 
+participant Firebase
+
 activate Actor
+activate MobileApplication
 activate Server
 
+Actor->MobileApplication:1. New interaction
+MobileApplication->Server:2. Interaction request
+Server->Database:3. findRecipent()
+activate Database
+Server<<--Database:4. Recipent
 
-Server->Database:somethingNew
-Server<--Database:success
-Server->Database:findUser()
-Server<--Database:User
+
+activate Firebase
+Server->Database:5. saveNotification
+Server<<--Database:6. success
+deactivate Database
 
 opt notification on
-Server->Firebase:notifyBody
-activate Firebase
-Server->Database:saveNotification
-Server<--Database:success
-deactivate Server
-MobileApplication<--Firebase:pushNotify
-activate MobileApplication
+
+Server->Firebase:7. notifyBody
+MobileApplication<<--Firebase:8. pushNotify
 deactivate Firebase
-Actor<--MobileApplication:pushNotification
-end
-Actor->MobileApplication:open NotificationsScreen
-MobileApplication->Server:getNotificationsReq
-activate Server
-Server->Server:verifyToken
-
-alt Valid token
-Server->Database:findNotification()
-
-Server<--Database:return
-
-MobileApplication<--Server:return
-deactivate Server
-Actor<--MobileApplication:showNotifications()
-
-else Invalid token
-
-activate Server
-MobileApplication<--Server:error
-deactivate Server
-Actor<--MobileApplication:re-login
-
-else Server error
-
-activate Server
-MobileApplication<--Server:error
-deactivate Server
-Actor<--MobileApplication:showMessage()
+Recipient<<--MobileApplication:9. pushNotification
+activate Recipient
 end

@@ -9,44 +9,44 @@ activate Actor
 activate Mobile Application
 activate Server
 
-Actor->Mobile Application:Edit Profile
-Mobile Application->Actor:EditProfileScreen()
+Actor->Mobile Application:1. Edit Profile
+Mobile Application-->>Actor:2. EditProfileScreen()
 
 loop Form Invalid
-Actor->Mobile Application:Input form
-Mobile Application->Mobile Application:validateForm()
-Mobile Application->Actor:invalidForm()
+Actor->Mobile Application:3. Input form
+Mobile Application->Mobile Application:4. validateForm()
+Mobile Application-->>Actor:5. invalidForm()
 end
 
-Mobile Application->Server:PUT /api/users/{userId}
+Mobile Application->Server:6. PUT /api/users/{userId}
 
 alt Normal
-Server->Database:validateUser(userId)
+Server->Database:7. validateUser(userId)
 activate Database
-Database-->>Server:Result
+Database-->>Server:8. Result
 deactivate Database
 
 alt Validate Success
 
-Server->>Database:updateUserInfo()
+Server->>Database:9. updateUserInfo()
 activate Database
-Database-->>Server:Result
+Database-->>Server:10. Result
 
-Server-->>Mobile Application:response: UserInfo
+Server-->>Mobile Application:11.1. response: UserInfo
 
-Mobile Application-->>Actor:ProfileScreen(UserInfo)
+Mobile Application-->>Actor:12.1. ProfileScreen(UserInfo)
 
 else Validate Failure
-Server-->>Mobile Application:error: "Phiên đăng nhập không hợp lệ hoặc bạn không có quyền chỉnh sửa hồ sơ này."
-Mobile Application-->>Actor:showMessage()
+Server-->>Mobile Application:11.2. error: "Phiên đăng nhập không hợp lệ hoặc bạn không có quyền chỉnh sửa hồ sơ này."
+Mobile Application-->>Actor:12.2. showMessage()
 
 else User doesn't exist
-Server-->>Mobile Application:error: "Người dùng không tồn tại."
-Mobile Application-->>Actor:showMessage()
+Server-->>Mobile Application:11.3. error: "Người dùng không tồn tại."
+Mobile Application-->>Actor:12.3. showMessage()
 
 end
 
 else ServerError
-Server-->>Mobile Application:error: "Đã xảy ra lỗi. Vui lòng thử lại sau."
-Mobile Application-->>Actor:showMessage()
+Server-->>Mobile Application:11.4. error: "Đã xảy ra lỗi. Vui lòng thử lại sau."
+Mobile Application-->>Actor:12.4. showMessage()
 end

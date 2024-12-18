@@ -1,4 +1,4 @@
-title Tìm kiếm bài viết
+title Tìm kiếm
 
 actor Actor
 
@@ -10,16 +10,16 @@ database Database
 activate Actor
 activate MobileApplication
 
-Actor->MobileApplication:Choose search
-MobileApplication->Actor:SearchScreen
+Actor->MobileApplication:1. Choose search
+MobileApplication-->>Actor:2. SearchScreen
 
-Actor->MobileApplication:Search
-MobileApplication->Server:postSearchReq(query)
+Actor->MobileApplication:3. Search
+MobileApplication->Server:4. postSearchReq(query)
 activate Server
-Server->Database:find(query)
+Server->Database:5. find(query)
 activate Database
-Database-->Server://posts//
+Database-->>Server:6. //result//
 deactivate Database
-Server-->MobileApplication://posts//
+Server-->>MobileApplication:7. //result//
 deactivate Server
-Actor<--MobileApplication:showResults()
+Actor<<--MobileApplication:8. showResults()

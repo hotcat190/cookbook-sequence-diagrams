@@ -1,4 +1,4 @@
-title Xem bài viết chi tiết
+title Tương tác với bài viết
 
 actor Actor
 participant Mobile Application
@@ -9,42 +9,42 @@ activate Actor
 activate Mobile Application
 activate Server
 
-Actor->Mobile Application:1. View Post Details
+Actor->Mobile Application:1. Interact with post (Like/ Fav/ Comment)
 
-Mobile Application->Server:2. GET /api/posts/{postsId}
+Mobile Application->Server:2. Send interaction requests
 
 alt Normal
-Server->Database:3. validateUser(userId)
+Server->Database:3. ValidateUser(userId)
 activate Database
 Database-->>Server:4. Result
 deactivate Database
 
 alt Validate Success
 
-Server->Database:5. getPost(postId)
+Server->Database:5. addLike(postId)
 activate Database
 Database-->>Server:6. Result
 deactivate Database
 
 alt Post exist
 
-Server-->>Mobile Application:7.1. response: postDetails
-Mobile Application-->>Actor:8.1. PostDetailsScreen(postDetails)
+Server-->>Mobile Application:7.1. response: {"message": "Đã thích bài viết.", "likesCount": 101}
+Mobile Application-->>Actor:7.1.1. updated Screen with interaction
 
 else Post doesn't exist
 Server-->>Mobile Application:7.2. error: "Bài viết không tồn tại."
-Mobile Application-->>Actor:8.2. showMessage()
+Mobile Application-->>Actor:7.2.1. showMessage()
 
 
 end
 
 else Validate Failure
 Server-->>Mobile Application:7.3. error: "Phiên đăng nhập không hợp lệ."
-Mobile Application-->>Actor:8.3. showMessage()
+Mobile Application-->>Actor:7.3.1. showMessage()
 
 end
 
 else ServerError
 Server-->>Mobile Application:7.4. error: "Đã xảy ra lỗi. Vui lòng thử lại sau."
-Mobile Application-->>Actor:8.4. showMessage()
+Mobile Application-->>Actor:7.4.1. showMessage()
 end
